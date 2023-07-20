@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 
+	Configuration#status 속성은 log4j 내부 이벤트에 대한 로그 레벨을 의미
+		
+	패턴문자 api : https://logging.apache.org/log4j/2.x/manual/layouts.html#patterns
+-->
+<Configuration status="INFO">
+	<!-- 로그의 출력 위치를 정하는 요소이다. (콘솔, 파일, DB, OutputStream 등등) -->
+	<Appenders>
+		<!-- 콘솔에 로그 메시지를 출력한다. -->
+		<Console name="console" target="SYSTEM_OUT">
+			<!-- 로그의 출력 포멧을 지정한다. -->
+			<!-- <PatternLayout pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{5} %M - %msg%n"/> -->
+			<PatternLayout pattern="[%-5level] %c{1.2.*}.%M - %msg%n"/>
+			<!-- %c{1.} c.s.a.s.s.StudentServiceTest -->
+			<!-- %c{1.2.} c.sh.ap.st.se.StudentServiceTest -->
+			<!-- %c{1.2.*} c.sh.app.student.service.StudentServiceTest -->
+		</Console>
+	</Appenders>
+	<!-- 로깅이 일어나는 부분을 그룹화하는 역할을 한다. -->
+	<!-- FATAL > ERROR > WARN > INFO > DEBUG > TRACE > ALL -->
+	<Loggers>
+		<!-- 일반적인 로그 정책을 의미 -->
+	    <Root level="INFO">
+      		<AppenderRef ref="console"/>
+    	</Root>
+    	<!-- 추가로 필요한 로그 정책을 정의 -->
+    	<Logger name="com.sh.app" level="DEBUG"></Logger>
+	</Loggers>
+</Configuration>
