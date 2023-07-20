@@ -1,6 +1,7 @@
 # hello-maven
 
-archetype 설정없이 만든 maven project
+maven-archetype-quickstart (archetype 설정 안함)
+
 
 ## pom.xml
 
