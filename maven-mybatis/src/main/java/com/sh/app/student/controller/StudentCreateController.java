@@ -9,11 +9,15 @@ import javax.servlet.http.HttpServletResponse;
 import com.sh.app.common.AbstractController;
 import com.sh.app.student.entity.Student;
 import com.sh.app.student.service.StudentService;
-import com.sh.app.student.service.StudentServiceImpl;
 
-public class StudentEnrollController extends AbstractController {
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
-	private StudentService studentService = new StudentServiceImpl();
+@RequiredArgsConstructor
+@Log4j2
+public class StudentCreateController extends AbstractController {
+
+	private final StudentService studentService;
 
 	/**
 	 * 학생 등록페이지 요청
@@ -21,7 +25,7 @@ public class StudentEnrollController extends AbstractController {
 	@Override
 	public String doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// jsp포워딩용
-		return "student/studentForm";
+		return "student/studentCreate";
 	}
 
 	/**
@@ -37,17 +41,16 @@ public class StudentEnrollController extends AbstractController {
 		Student stdt = new Student();
 		stdt.setName(name);
 		stdt.setTel(tel);
-		System.out.println("student@controller = " + stdt);
+		log.debug("student = {}", stdt);
 
 		// 2. 업무로직
 		int result = studentService.insertStudent(stdt);
-		String msg = (result > 0) ? "학생 등록 성공!" : "학생 등록 실패!";
-		System.out.println(msg);
+		String msg = "학생 등록 성공!";
 
 		// 3. 리다이렉트 및 사용자피드백
 		request.getSession().setAttribute("msg", msg);
 
-		return "redirect:/student/studentEnroll.do";
+		return "redirect:/student/studentCreate.do";
 	}
 
 }

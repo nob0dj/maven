@@ -1,21 +1,21 @@
 --student테이블 생성
 -- drop table student
 create table student(
-    no number,
+    id number,
     name varchar2(100) not null,
     tel char(11) not null,
     created_at date default sysdate,
-    constraint pk_student_no primary key(no)
+    constraints pk_student_id primary key(id)
 );
-create sequence seq_student_no;
+create sequence seq_student_id;
 
 select * from student order by no desc;
 
 --delete from student where name = '마동석';
 
-insert into student values (seq_student_no.nextval, '홍길동', '01012341234', default);
-insert into student values (seq_student_no.nextval, '신사임당', '01022223333', default);
-insert into student values (seq_student_no.nextval, '이순신', '01033334444', default);
+insert into student values (seq_student_id.nextval, '홍길동', '01012341234', default);
+insert into student values (seq_student_id.nextval, '신사임당', '01022223333', default);
+insert into student values (seq_student_id.nextval, '이순신', '01033334444', default);
 
 
 --mybatis 동적쿼리

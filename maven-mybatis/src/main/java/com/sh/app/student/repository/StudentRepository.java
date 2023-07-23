@@ -13,15 +13,15 @@ public interface StudentRepository {
 
 	int insertStudentMap(SqlSession session, Map<String, Object> studentMap);
 
-	int selectTotalContent(SqlSession session);
-
-	Student selectOneStudent(SqlSession session, int no);
-
+	int updateStudent(SqlSession session, Student student);
+	
 	int updateStudent(SqlSession session, Map<String, Object> map);
 
-	int deleteStudent(SqlSession session, int no);
+	int deleteStudent(SqlSession session, int id);
 
-	Map<String, Object> selectOneStudentMap(SqlSession session, int no);
+	Student selectOneStudent(SqlSession session, int id);
+	
+	Map<String, Object> selectOneStudentMap(SqlSession session, int id);
 
 	List<Student> selectStudentList(SqlSession session);
 
@@ -29,6 +29,8 @@ public interface StudentRepository {
 
 	Map<Integer, Object> selectStudentMapKey(SqlSession session);
 
-	int updateStudent(SqlSession session, Student student);
+	int getTotalCount(SqlSession session);
+
+	List<Student> selectStudentList(SqlSession session, Map<String, Object> params);
 
 }

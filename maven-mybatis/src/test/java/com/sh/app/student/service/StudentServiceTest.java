@@ -20,6 +20,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import com.sh.app.student.entity.Student;
+import com.sh.app.student.repository.StudentRepositoryImpl;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -32,7 +33,7 @@ class StudentServiceTest {
 
     @BeforeEach // JUnit 4의 @Before
     void setUp() {
-        this.studentService = new StudentServiceImpl();
+        this.studentService = new StudentServiceImpl(new StudentRepositoryImpl());
     }
 	
     @DisplayName("StudentService 의존객체 주입")
@@ -53,7 +54,7 @@ class StudentServiceTest {
 		students.forEach(
 			(student) -> {
 				// log.debug("student = {}", student);
-				assertThat(student.getNo()).isNotEqualTo(0);
+				assertThat(student.getId()).isNotEqualTo(0);
 				assertThat(student.getName()).isNotEmpty();
 				assertThat(student.getTel()).isNotEmpty();
 				assertThat(student.getCreatedAt()).isNotNull();
@@ -66,7 +67,7 @@ class StudentServiceTest {
 		int no = 5; // 존재하는 임의의 학생번호
 		Student student = studentService.selectOneStudent(no);
 		assertThat(student).isNotNull();
-		assertThat(student.getNo()).isNotEqualTo(0);
+		assertThat(student.getId()).isNotEqualTo(0);
 		assertThat(student.getName()).isNotEmpty();
 		assertThat(student.getTel()).isNotEmpty();
 		assertThat(student.getCreatedAt()).isNotNull();
@@ -89,15 +90,15 @@ class StudentServiceTest {
 				.name("세종대왕")
 				.tel("01099999999")
 				.build();
-		assertThat(student.getNo()).isEqualTo(0);
+		assertThat(student.getId()).isEqualTo(0);
 		int result = studentService.insertStudent(student);
-		int no = student.getNo();
+		int no = student.getId();
 		assertThat(no).isNotEqualTo(0);
 		assertThat(result).isGreaterThan(0);
 		
 		student = studentService.selectOneStudent(no);
 		assertThat(student).isNotNull();
-		assertThat(student.getNo()).isNotEqualTo(0).isEqualTo(no);
+		assertThat(student.getId()).isNotEqualTo(0).isEqualTo(no);
 		assertThat(student.getName()).isNotEmpty();
 		assertThat(student.getTel()).isNotEmpty();
 		assertThat(student.getCreatedAt()).isNotNull();
@@ -110,7 +111,7 @@ class StudentServiceTest {
 	void test5(Student student) throws Exception {
 		log.debug("student = {}", student);
 		
-		int no = student.getNo();
+		int no = student.getId();
 		String newName = "마동석";
 		String newTel = "01055556666";
 		LocalDateTime createdAt = student.getCreatedAt();
@@ -123,7 +124,7 @@ class StudentServiceTest {
 		
 		student = studentService.selectOneStudent(no);
 		assertThat(student).isNotNull();
-		assertThat(student.getNo()).isEqualTo(no);
+		assertThat(student.getId()).isEqualTo(no);
 		assertThat(student.getName()).isEqualTo(newName);
 		assertThat(student.getTel()).isEqualTo(newTel);
 		assertThat(student.getCreatedAt()).isEqualTo(createdAt);
@@ -137,7 +138,7 @@ class StudentServiceTest {
 	void test6(Student student) throws Exception {
 		log.debug("student = {}", student);
 		
-		int no = student.getNo();
+		int no = student.getId();
 		
 		int result = studentService.deleteStudent(no);
 		assertThat(result).isGreaterThan(0);
@@ -170,7 +171,7 @@ class StudentServiceTest {
 	 * @return
 	 */
 	public static Stream<Arguments> studentProvider() {
-		StudentService studentService = new StudentServiceImpl();
+		StudentService studentService = new StudentServiceImpl(new StudentRepositoryImpl());
 		List<Student> students = studentService.selectStudentList();
 		return Stream.of(
 				Arguments.arguments(students.get(0))

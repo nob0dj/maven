@@ -2,6 +2,7 @@ package com.sh.app.common;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -16,6 +17,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.sh.app.common.exception.ControllerNotFoundException;
 import com.sh.app.common.exception.MethodNotAllowedException;
+import com.sh.app.emp.repository.EmpRepositoryImpl;
+import com.sh.app.emp.service.EmpService;
+import com.sh.app.emp.service.EmpServiceImpl;
+import com.sh.app.student.repository.StudentRepositoryImpl;
+import com.sh.app.student.service.StudentService;
+import com.sh.app.student.service.StudentServiceImpl;
 
 /**
  * .do로 끝나는 모든 요청을 처리할 대표 Servlet
@@ -28,7 +35,7 @@ public class DispatcherServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	Properties prop = new Properties();
-	Map<String, AbstractController> urlMap = new HashMap<>();
+	Map<String, AbstractController> commandMap = new HashMap<>();
 	
 	
 	/**
@@ -37,33 +44,41 @@ public class DispatcherServlet extends HttpServlet {
 	 */
 	public void init(ServletConfig config) throws ServletException {
 		System.out.println("---------------- DispatcherServlet.init start ---------------");
-		//1. prop
-		//src/main/resources/url.properties가 아닌
-		//buildpath의 /url.properties를 읽어온다.
-		String fileName = DispatcherServlet.class.getResource("/url-command.properties").getPath();
-		System.out.println("fileName@servlet.init = " + fileName);
-		try {
-			prop.load(new FileReader(fileName));
+		// 1. command-map.properties -> prop
+        Properties prop = new Properties();
+        String filepath = DispatcherServlet.class.getResource("/command-map.properties").getPath();
+        try {
+			prop.load(new FileReader(filepath));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		//2. prop -> urlMap
-		Set<String> keys = prop.stringPropertyNames();
-		for(String key : keys) {
-			String value = prop.getProperty(key);
-			//value(class명)을 가지고 객체 생성
-			try {
-				//class객체를 통한 제어 : reflection api
-				Class clazz = Class.forName(value);
-				AbstractController controller = 
-						(AbstractController) clazz.newInstance();
-				//urlMap에 요소로 추가
-				urlMap.put(key, controller);
-			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-				e.printStackTrace();
-			}
-		}
-		System.out.println("urlMap = " + urlMap);
+        
+        // 2. prop -> commandMap (reflection api)
+        StudentService studentService = new StudentServiceImpl(new StudentRepositoryImpl());
+        EmpService empService = new EmpServiceImpl(new EmpRepositoryImpl());
+        
+        Set<String> propNames = prop.stringPropertyNames();
+        try {
+	        for(String url : propNames) {
+	        	String className = prop.getProperty(url);
+	        	Class<?> clz = Class.forName(className);
+	        	AbstractController controller = null;
+	        	if(url.startsWith("/student")) {
+	        		Constructor<?> constructor = clz.getDeclaredConstructor(StudentService.class); // 생성자객체
+		        	controller = (AbstractController) constructor.newInstance(studentService); // new XXXController()
+	        	}
+	        	else if(url.startsWith("/emp")) {
+	        		Constructor<?> constructor = clz.getDeclaredConstructor(EmpService.class); // 생성자객체
+	        		controller = (AbstractController) constructor.newInstance(empService); // new XXXController()
+	        	}
+	 
+	        	commandMap.put(url, controller);
+	        }
+        } catch (Exception e) {
+        	e.printStackTrace();
+        }
+        
+        System.out.println("commandMap : " + commandMap);
 		System.out.println("--------------- DispatcherServlet.init end ---------------");
 	
 	}
@@ -78,7 +93,7 @@ public class DispatcherServlet extends HttpServlet {
 		String url = uri.substring(beginIndex);
 		
 		//2. controller 호출
-		AbstractController controller = urlMap.get(url);
+		AbstractController controller = commandMap.get(url);
 		if(controller == null)
 			throw new ControllerNotFoundException(url + "에 해당하는 controller가 없습니다.");
 		

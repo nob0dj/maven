@@ -11,16 +11,19 @@ import com.sh.app.student.entity.Student;
 import com.sh.app.student.repository.StudentRepository;
 import com.sh.app.student.repository.StudentRepositoryImpl;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 public class StudentServiceImpl implements StudentService {
 
-	private StudentRepository studentDao = new StudentRepositoryImpl();
+	private final StudentRepository studentRepository;
 
 	@Override
 	public int insertStudent(Student student) {
 		SqlSession session = getSqlSession();
 		int result = 0;
 		try {
-			result = studentDao.insertStudent(session, student);
+			result = studentRepository.insertStudent(session, student);
 			session.commit();
 		} catch (Exception e) {
 			session.rollback();
@@ -37,7 +40,7 @@ public class StudentServiceImpl implements StudentService {
 		SqlSession session = getSqlSession();
 		int result = 0;
 		try {
-			result = studentDao.insertStudentMap(session, studentMap);
+			result = studentRepository.insertStudentMap(session, studentMap);
 			session.commit();
 		} catch(Exception e) {
 			session.rollback();
@@ -50,17 +53,9 @@ public class StudentServiceImpl implements StudentService {
 	}
 
 	@Override
-	public int selectTotalContent() {
+	public Student selectOneStudent(int id) {
 		SqlSession session = getSqlSession();
-		int totalContent = studentDao.selectTotalContent(session);
-		session.close();
-		return totalContent;
-	}
-
-	@Override
-	public Student selectOneStudent(int no) {
-		SqlSession session = getSqlSession();
-		Student student = studentDao.selectOneStudent(session, no);
+		Student student = studentRepository.selectOneStudent(session, id);
 		session.close();
 		return student;
 	}
@@ -70,7 +65,7 @@ public class StudentServiceImpl implements StudentService {
 		SqlSession session = getSqlSession();
 		int result = 0;
 		try {
-			result = studentDao.updateStudent(session, student);
+			result = studentRepository.updateStudent(session, student);
 			session.commit();
 		} catch(Exception e) {
 			session.rollback();
@@ -89,7 +84,7 @@ public class StudentServiceImpl implements StudentService {
 		int result = 0;
 		try {
 			//dml실행구문
-			result = studentDao.updateStudent(session, map);
+			result = studentRepository.updateStudent(session, map);
 			session.commit();
 		} catch (Exception e) {
 			session.rollback();
@@ -101,12 +96,12 @@ public class StudentServiceImpl implements StudentService {
 	}
 
 	@Override
-	public int deleteStudent(int no) {
+	public int deleteStudent(int id) {
 		SqlSession session = getSqlSession();
 		int result = 0;
 		try {
 			//dml실행구문
-			result = studentDao.deleteStudent(session, no);
+			result = studentRepository.deleteStudent(session, id);
 			session.commit();
 		} catch (Exception e) {
 			session.rollback();
@@ -118,9 +113,9 @@ public class StudentServiceImpl implements StudentService {
 	}
 
 	@Override
-	public Map<String, Object> selectOneStudentMap(int no) {
+	public Map<String, Object> selectOneStudentMap(int id) {
 		SqlSession session = getSqlSession();
-		Map<String, Object> student = studentDao.selectOneStudentMap(session, no);
+		Map<String, Object> student = studentRepository.selectOneStudentMap(session, id);
 		session.close();
 		return student;
 	}
@@ -128,7 +123,7 @@ public class StudentServiceImpl implements StudentService {
 	@Override
 	public List<Student> selectStudentList() {
 		SqlSession session = getSqlSession();
-		List<Student> list = studentDao.selectStudentList(session);
+		List<Student> list = studentRepository.selectStudentList(session);
 		session.close();
 		return list;
 	}
@@ -136,7 +131,7 @@ public class StudentServiceImpl implements StudentService {
 	@Override
 	public List<Map<String, Object>> selectStudentMapList() {
 		SqlSession session = getSqlSession();
-		List<Map<String, Object>> mapList = studentDao.selectStudentMapList(session);
+		List<Map<String, Object>> mapList = studentRepository.selectStudentMapList(session);
 		session.close();
 		return mapList;
 	}
@@ -144,11 +139,25 @@ public class StudentServiceImpl implements StudentService {
 	@Override
 	public Map<Integer, Object> selectStudentMapKey() {
 		SqlSession session = getSqlSession();
-		Map<Integer, Object> map = studentDao.selectStudentMapKey(session);
+		Map<Integer, Object> map = studentRepository.selectStudentMapKey(session);
 		session.close();
 		return map;
 	}
 
+	@Override
+	public int getTotalCount() {
+		SqlSession session = getSqlSession();
+		int totalCount = studentRepository.getTotalCount(session);
+		session.close();
+		return totalCount;
+	}
 	
+	@Override
+	public List<Student> selectStudentList(Map<String, Object> params) {
+		SqlSession session= getSqlSession();
+		List<Student> students = studentRepository.selectStudentList(session, params);
+		session.close();
+		return students;
+	}
 	
 }

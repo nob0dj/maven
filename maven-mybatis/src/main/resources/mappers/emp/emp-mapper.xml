@@ -3,31 +3,209 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="emp">
-  <select id="selectEmpList" resultMap="empMap">
-  	select 
-  		*
-  	from
-  		emp
-  	order by
-  		emp_id
-  </select>  
-  <resultMap type="hashmap" id="empMap">
-  	<id column="emp_id" property="empId"/>
-  	<result column="emp_name" property="empName"/>
-  	<result column="emp_no" property="empNo"/>
-  	<result column="email" property="email"/>
-  	<result column="phone" property="phone"/>
-  	<result column="dept_code" property="deptCode"/>
-  	<result column="job_code" property="jobCode"/>
-  	<result column="sal_level" property="salLevel"/>
-  	<result column="salary" property="salary"/>
-  	<result column="bonus" property="bonus"/>
-  	<result column="manager_id" property="managerId"/>
-  	<result column="hire_date" property="hireDate"/>
-  	<result column="quit_date" property="quitDate"/>
-  	<result column="quit_yn" property="quitYn"/>
-  	
-  </resultMap>
+	<select id="selectEmpList" resultMap="empMap">
+	  select 
+		  *
+	  from
+		  emp
+	  order by
+		  emp_id
+	</select>  
+	<resultMap type="hashmap" id="empMap">
+	  <id column="emp_id" property="empId"/>
+	  <result column="emp_name" property="empName"/>
+	  <result column="emp_no" property="empNo"/>
+	  <result column="gender" property="gender"/>
+	  <result column="email" property="email"/>
+	  <result column="phone" property="phone"/>
+	  <result column="dept_code" property="deptCode"/>
+	  <result column="dept_title" property="deptTitle"/>
+	  <result column="job_code" property="jobCode"/>
+	  <result column="job_name" property="jobName"/>
+	  <result column="sal_level" property="salLevel"/>
+	  <result column="salary" property="salary"/>
+	  <result column="bonus" property="bonus"/>
+	  <result column="manager_id" property="managerId"/>
+	  <result column="hire_date" property="hireDate"/>
+	  <result column="quit_date" property="quitDate"/>
+	  <result column="quit_yn" property="quitYn"/>
+  	</resultMap>
+  
+	<select id="search1" resultMap="empMap">
+		select * 
+		from emp
+		where ${searchType} like '%'||#{searchKeyword}||'%'
+	</select>
+	
+	<select id="search2" resultMap="empMap">
+		select *
+		from (
+				select A.*
+					  ,decode(substr(emp_no,8,1),1,'남',3,'남','여') gender 
+				from emp A ) A
+		<where>
+			<!-- 성별기준 -->
+			<!-- <if test="not empty gender">--><!-- 에러유발 -->
+			<if test="gender != null and gender != ''">
+				and gender = #{gender}
+			</if>
+			<!-- 급여기준 -->
+			<!-- 
+			<if test="salary != null and salary != ''">
+				<if test="salaryCompare eq 'le'">and salary <![CDATA[ <= ]]> #{salary}</if>
+				<if test="salaryCompare eq 'ge'">and salary <![CDATA[ >= ]]> #{salary}</if>
+			</if> 
+			-->
+			<if test="salary != null and salary != ''">
+				<choose>
+					<when test="salaryCompare eq 'le'">and salary <![CDATA[ <= ]]> #{salary}</when>
+					<when test="salaryCompare eq 'ge'">and salary <![CDATA[ >= ]]> #{salary}</when>
+					<otherwise></otherwise>
+				</choose>
+			</if>
+			<!-- 입사일기준 -->
+			<if test="hire_date != null and hire_date != ''">
+				<if test="hireDateCompare eq 'le'">
+				and to_date(to_char(hire_date,'yyyy-mm-dd'),'yyyy-mm-dd') <![CDATA[ <= ]]> to_date(#{hire_date},'yyyy-mm-dd')
+				</if>
+				<if test="hireDateCompare eq 'ge'">
+				and to_date(to_char(hire_date,'yyyy-mm-dd'),'yyyy-mm-dd') <![CDATA[ >= ]]> to_date(#{hire_date},'yyyy-mm-dd')
+				</if>
+			</if>
+			<!-- 근무개월수 기준 -->
+			<if test="workingDay != null and workingDay != ''">
+				<if test="workingDayCompare eq 'le'">and months_between(sysdate, hire_date) <![CDATA[ <= ]]> #{workingDay}</if>
+				<if test="workingDayCompare eq 'ge'">and months_between(sysdate, hire_date) <![CDATA[ >= ]]> #{workingDay}</if>
+			</if>
+		</where> 
+	</select>
+	
+	<select id="search3" resultMap="empMap">
+		select 
+			A.*, 
+			B.DEPT_TITLE, 
+			C.JOB_NAME
+		from 
+			emp A 
+			  left join dept B 
+			    on A.dept_code = B.DEPT_ID
+		      left join job C 
+		        on A.job_code = C.job_code
+		<where>
+		 
+			<if test="jobCodes != null">
+				and A.job_code in
+				<foreach collection="jobCodes" item="item"  index="i" open="(" close=")" separator="," >
+					#{item}
+				</foreach>
+			</if>
+			<if test="deptCodes != null">
+				and nvl(dept_code,'D0') in
+				<foreach collection="deptCodes" item="item"  index="i" open="(" close=")" separator="," >
+				#{item}
+				</foreach>
+			</if>
+		</where>
+	</select>
+	
+	<select id="search3Count" resultType="_int">
+	select count(*)
+	from emp A 
+	    left join dept B on A.dept_code = B.dept_id
+	    left join job C on A.job_code = C.job_code
+	<!-- where 1=1 -->
+	<!-- <where> -->
+	<trim prefix="where" prefixOverrides="and | or">
+		<if test="jobCodes != null">
+			and A.job_code in 
+			<foreach collection="jobCodes" 
+					item="item" 
+					open="("
+					close=")"
+					separator=",">
+			#{item}
+			</foreach>
+		</if>
+		<if test="deptCodes != null">
+			and nvl(dept_code,'D0') in
+			<foreach collection="deptCodes" item="item"  index="i" open="(" close=")" separator="," >
+			#{item}
+		</foreach>
+		</if>
+	</trim>
+	<!-- </where> -->
+	</select>
+	<select id="empList" resultMap="empMap">
+		select * from emp order by emp_id
+	</select>
+	<select id="selectTotalContents" resultType="_int">
+		select count(*) from emp
+	</select>
+	
+	<!-- @실습문제 : search1 페이징처리하기-->
+	<select id="search1Paging" resultMap="empMap" parameterType="map">
+		select * from emp 
+		<if test="searchType != null and searchKeyword != null">
+		where ${searchType} like '%'||#{searchKeyword}||'%'
+		</if>
+		order by emp_id
+	</select>
+	<select id="search1TotalContents" resultType="_int">
+		select count(*) from emp
+		<if test="searchType != null and searchKeyword != null">
+		where ${searchType} like '%'||#{searchKeyword}||'%'
+		</if>
+	</select>
+	
+	
+	<select id="selectOneEmp" resultType="map">
+		select * from emp where emp_id = #{empId}
+	</select>
+	<select id="selectEmpIdList" resultType="string">
+		select emp_id from emp
+	</select>
+	<select id="selectSalLevelList" resultType="map">
+		select sal_level from sal_grade
+	</select>
+	<select id="selectJobCodeList" resultType="map">
+		select job_code from job
+	</select>
+	<select id="selectDeptCodeList" resultType="map">
+		select distinct dept_id as dept_code from dept
+	</select>
+	<!-- #updateEmp: set사용 -->
+	<!-- <update id="updateEmp">
+		update emp
+		<set>
+			<if test="salLevel != null and salLevel !=''">
+			sal_level = #{salLevel},
+			</if>
+			<if test="jobCode != null and jobCode !=''">
+			job_code = #{jobCode},
+			</if>
+			<if test="deptCode != null and deptCode !=''">
+			dept_code = #{deptCode},
+			</if>
+		</set>
+		where emp_id = #{empId}
+	</update> -->
+	<!-- #updateEmp: trim 사용 -->
+	<update id="updateEmp">
+		update emp
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="salLevel != null and salLevel !=''">
+			sal_level = #{salLevel},
+			</if>
+			<if test="jobCode != null and jobCode !=''">
+			job_code = #{jobCode},
+			</if>
+			<if test="deptCode != null and deptCode !=''">
+			dept_code = #{deptCode},
+			</if>
+		</trim>
+		where emp_id = #{empId}
+	</update>
+  
 </mapper>
 
 

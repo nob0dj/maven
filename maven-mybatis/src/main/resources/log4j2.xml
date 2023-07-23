@@ -12,7 +12,7 @@
 		<Console name="console" target="SYSTEM_OUT">
 			<!-- 로그의 출력 포멧을 지정한다. -->
 			<!-- <PatternLayout pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{5} %M - %msg%n"/> -->
-			<PatternLayout pattern="[%-5level] %c{1.2.*}.%M - %msg%n"/>
+			<PatternLayout pattern="[%-5level] %c{1.}.%M - %msg%n"/>
 			<!-- %c{1.} c.s.a.s.s.StudentServiceTest -->
 			<!-- %c{1.2.} c.sh.ap.st.se.StudentServiceTest -->
 			<!-- %c{1.2.*} c.sh.app.student.service.StudentServiceTest -->

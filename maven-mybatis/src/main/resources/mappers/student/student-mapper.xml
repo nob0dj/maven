@@ -5,29 +5,28 @@
 <mapper namespace="student">
   <insert id="insertStudent" parameterType="com.sh.app.student.entity.Student">
   	insert into 
-  		student (no, name, tel)
+  		student (id, name, tel)
   	values (
-  		seq_student_no.nextval, 
+  		seq_student_id.nextval, 
   		#{name}, 
   		#{tel}
   	)
-  	<selectKey order="AFTER" keyProperty="no" resultType="_int">
-  		select seq_student_no.currval from dual
+  	<selectKey order="AFTER" keyProperty="id" resultType="_int">
+  		select seq_student_id.currval from dual
   	</selectKey>
   </insert>
   
   <insert id="insertStudentMap" parameterType="hashmap">
   	insert into 
-  		student (no, name, tel)
+  		student (id, name, tel)
   	values (
-  		seq_student_no.nextval, 
+  		seq_student_id.nextval, 
   		#{name}, 
   		#{tel}
   	)
   </insert>
   
-  <!-- select쿼리는 resultType속성을 생략할 수 없다. -->
-  <select id="selectTotalContent" resultType="_int">
+  <select id="getTotalCount" resultType="_int">
   	select
   		count(*)
   	from 
@@ -40,7 +39,7 @@
   	from 
   		student
   	where
-  		no = #{no}
+  		id = #{id}
   </select>
   
   <update id="updateStudent">
@@ -50,39 +49,31 @@
   		name = #{name},
   		tel = #{tel}
   	where
-  		no = #{no}
+  		id = #{id}
   </update>
 
   <delete id="deleteStudent">
   	delete from
   		student
   	where
-  		no = #{no}
+  		id = #{id}
   </delete>
   
   <select id="selectOneStudentMap" resultMap="studentMap">
-  	<!-- select 
-  		no "studentNo",
-  		name "studentName",
-  		tel "studentTel"
-  	from 
-  		student
-  	where
-  		no = #{no} -->
   	select 
   		*
   	from 
   		student
   	where
-  		no = #{no}
+  		id = #{id}
   </select>
   
   <!-- 재사용 가능 -->
   <resultMap type="map" id="studentMap">
-  	<id column="no" property="no"/><!-- pk -->
+  	<id column="id" property="id"/><!-- pk -->
   	<result column="name" property="name"/><!-- 나머지 컬럼 -->
   	<result column="tel" property="tel"/>
-  	<result column="created_at" property="createdAt" javaType="java.time.LocalDateTime"/>
+  	<result column="created_at" property="createdAt"/>
   </resultMap>
   
   <!-- *여러행을 리턴하는 경우에도 resultType은 한행에 일치하는 타입을 작성한다. -->
@@ -92,7 +83,7 @@
   	from 
   		student
   	order by 
-  		no desc
+  		id desc
   </select>
   
   <select id="selectStudentMapList" resultMap="studentMap">
@@ -101,7 +92,7 @@
   	from 
   		student
   	order by 
-  		no desc
+  		id desc
   </select>
   
   <select id="selectStudentMapKey" resultMap="studentMap">
@@ -110,7 +101,7 @@
   	from 
   		student
   	order by 
-  		no 
+  		id 
   </select>
   
 </mapper>

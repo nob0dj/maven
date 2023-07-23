@@ -1,8 +1,8 @@
 # maven-webapp
 
 ## 설정
-
-maven-archetype-webapp 1.4로 설정시 servlet 버젼이 낮아 추가설정이 필요하다.
+1. 프로젝트 레벨 - Server Runtime Library 추가
+2. maven-archetype-webapp 1.4로 설정시 servlet 버젼이 낮아 추가설정이 필요하다.
 
 @pom.xml
 ```xml
@@ -22,4 +22,4 @@ maven-archetype-webapp 1.4로 설정시 servlet 버젼이 낮아 추가설정이
 
 ```
 
-프로젝트 레벨 - Server Runtime Library 추간
+

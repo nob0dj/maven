@@ -11,23 +11,25 @@ public interface StudentService {
 
 	int insertStudentMap(Map<String, Object> studentMap);
 
-	int selectTotalContent();
-
 	int updateStudent(Student student);
 	
 	int updateStudent(Map<String, Object> map);
 
-	int deleteStudent(int no);
+	int deleteStudent(int id);
 
-	Map<String, Object> selectOneStudentMap(int no);
+	Map<String, Object> selectOneStudentMap(int id);
 
-	Student selectOneStudent(int no);
+	Student selectOneStudent(int id);
 
 	List<Student> selectStudentList();
 
 	List<Map<String, Object>> selectStudentMapList();
 
 	Map<Integer, Object> selectStudentMapKey();
+
+	int getTotalCount();
+
+	List<Student> selectStudentList(Map<String, Object> params);
 
 	
 
