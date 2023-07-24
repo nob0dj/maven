@@ -17,6 +17,11 @@ table.tbl-student th,table.tbl-student td{
 	padding:5px;
 }
 tr[data-id] {cursor: pointer;}
+.btn-wrapper {
+	margin: 20px 0;
+	display: flex;
+	justify-content: space-evenly;
+}
 </style>
 <script>
 window.addEventListener('click', () => {	
@@ -26,6 +31,14 @@ window.addEventListener('click', () => {
 			console.log(id);
 			location.href = `${pageContext.request.contextPath}/student/studentDetail.do?id=\${id}`;
 		});
+	});
+	
+	const page = ${page};
+	document.querySelector("#prev").addEventListener('click', () => {
+		location.href = `${pageContext.request.contextPath}/student/studentList.do?page=\${page - 1}`;
+	});
+	document.querySelector("#next").addEventListener('click', () => {
+		location.href = `${pageContext.request.contextPath}/student/studentList.do?page=\${page + 1}`;
 	});
 });
 </script>
@@ -64,7 +77,10 @@ window.addEventListener('click', () => {
 			<tr>		
 		</c:if>	
 	</table>
-	<br/><br/>
+	<div class="btn-wrapper">
+		<button id="prev" ${page eq 1 ? 'disabled' : ''}>이전</button>
+		<button id="next" ${page eq lastPage ? 'disabled' : ''}>다음</button>
+	</div>
 	
 	<p>SqlSession의 selectList메소드를 호출해서 List&lt;Map&lt;String, Object>>를 리턴받음.</p>
 	<table class="tbl-student">

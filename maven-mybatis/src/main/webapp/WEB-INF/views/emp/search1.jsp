@@ -18,7 +18,6 @@ table.tbl-emp{
 table.tbl-emp th, table.tbl-emp td{
 	border:1px solid;
 	padding:5px;
-	background:lightseagreen;
 }
 div#search-container{
 	padding:15px 0;

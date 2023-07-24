@@ -18,7 +18,6 @@ table.tbl-emp{
 table.tbl-emp th, table.tbl-emp td{
 	border:1px solid;
 	padding:5px;
-	background:lightseagreen;
 }
 div#search-container{
 	padding:15px 0;
@@ -41,11 +40,12 @@ table#tbl-search td{text-align:left;}
 	<h2>사원정보 </h2>
 	<div id="search-container">
 		<form action="search2.do" >
-			<p>
-				<h3>검색</h3>
-				<input type="button" value="초기화" onclick="location.href='search2.do';"/>
-			</p>
 			<table id="tbl-search">
+				<tr>
+					<td colspan="2">
+						<input type="button" value="초기화" onclick="location.href='${pageContext.request.contextPath}/emp/search2.do';';"/>
+					</td>
+				</tr>
 				<tr>
 					<th colspan="2">
 						<select name="searchType" >
