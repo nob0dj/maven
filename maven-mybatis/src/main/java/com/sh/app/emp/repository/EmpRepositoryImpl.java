@@ -15,23 +15,23 @@ public class EmpRepositoryImpl implements EmpRepository {
 	}
 
 	@Override
-	public List<Map<String, Object>> search1(SqlSession session, Map<String, Object> map) {
-		return session.selectList("emp.search1", map);
+	public List<Map<String, Object>> search1(SqlSession session, Map<String, Object> params) {
+		return session.selectList("emp.search1", params);
 	}
 
 	@Override
-	public List<Map<String, Object>> search2(SqlSession session, Map<String, Object> map) {
-		return session.selectList("emp.search2", map);
+	public List<Map<String, Object>> search2(SqlSession session, Map<String, Object> params) {
+		return session.selectList("emp.search2", params);
 	}
 
 	@Override
-	public List<Map<String, Object>> search3(SqlSession session, Map<String, Object> map) {
-		return session.selectList("emp.search3", map);
+	public List<Map<String, Object>> search3(SqlSession session, Map<String, Object> params) {
+		return session.selectList("emp.search3", params);
 	}
 
 	@Override
-	public int search3Count(SqlSession session, Map<String, Object> map) {
-		return session.selectOne("emp.search3Count", map);
+	public int search3Count(SqlSession session, Map<String, Object> params) {
+		return session.selectOne("emp.search3Count", params);
 	}
 
 	@Override
@@ -43,21 +43,21 @@ public class EmpRepositoryImpl implements EmpRepository {
 	}
 
 	@Override
-	public int selectTotalContents(SqlSession session) {
-		return session.selectOne("emp.selectTotalContents");
+	public int selectTotalCount(SqlSession session) {
+		return session.selectOne("emp.selectTotalCount");
 	}
 
 	@Override
-	public List<Map<String, Object>> search1Paging(SqlSession session, Map<String, Object> map, int cPage,
+	public List<Map<String, Object>> search1Paging(SqlSession session, Map<String, Object> params, int cPage,
 			int numPerPage) {
 		// org.apache.ibatis.session.RowBounds.RowBounds(int offset, int limit)
 		RowBounds rowBounds = new RowBounds((cPage - 1) * numPerPage, numPerPage);
-		return session.selectList("emp.search1Paging", map, rowBounds);
+		return session.selectList("emp.search1Paging", params, rowBounds);
 	}
 
 	@Override
-	public int search1TotalContents(SqlSession session, Map<String, Object> map) {
-		return session.selectOne("emp.search1TotalContents", map);
+	public int search1TotalContents(SqlSession session, Map<String, Object> params) {
+		return session.selectOne("emp.search1TotalContents", params);
 	}
 
 	@Override
@@ -65,29 +65,19 @@ public class EmpRepositoryImpl implements EmpRepository {
 		return session.selectOne("emp.selectOneEmp", empId);
 	}
 
-	@Override
-	public List<String> selectJobCodeList(SqlSession session) {
-		return session.selectList("emp.selectJobCodeList");
-	}
-
-	@Override
-	public List<String> selectSalLevelList(SqlSession session) {
-		return session.selectList("emp.selectSalLevelList");
-	}
-
-	@Override
-	public List<String> selectEmpIdList(SqlSession session) {
-		return session.selectList("emp.selectEmpIdList");
-	}
-
-	@Override
-	public List<String> selectDeptCodeList(SqlSession session) {
-		return session.selectList("emp.selectDeptCodeList");
-	}
 
 	@Override
 	public int updateEmp(SqlSession session, Map<String, Object> param) {
 		return session.update("emp.updateEmp", param);
 	}
 
+	@Override
+	public List<Map<String, Object>> selectJobList(SqlSession session) {
+		return session.selectList("emp.selectJobList");
+	}
+
+	@Override
+	public List<Map<String, Object>> selectDeptList(SqlSession session) {
+		return session.selectList("emp.selectDeptList");
+	}
 }

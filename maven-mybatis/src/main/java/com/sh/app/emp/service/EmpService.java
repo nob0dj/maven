@@ -7,34 +7,28 @@ public interface EmpService {
 
 	List<Map<String, Object>> selectEmpList();
 
-	List<Map<String, Object>> search1(Map<String, Object> map);
+	List<Map<String, Object>> search1(Map<String, Object> params);
 
-	List<Map<String, Object>> search2(Map<String, Object> map);
+	List<Map<String, Object>> search2(Map<String, Object> params);
 
-	List<Map<String, Object>> search3(Map<String, Object> map);
+	List<Map<String, Object>> search3(Map<String, Object> params);
 
 	List<Map<String, Object>> selectEmpList(int cPage, int numPerPage);
 
-	int selectTotalContents();
+	int selectTotalCount();
 
-	int search3Count(Map<String, Object> map);
+	List<Map<String, Object>> selectJobList();
 
-	List<Map<String, Object>> search1Paging(Map<String, Object> map, int cPage, int numPerPage);
+	List<Map<String, Object>> selectDeptList();
 
-	int search1TotalContents(Map<String, Object> map);
+	int search3Count(Map<String, Object> params);
 
 	Map<String, Object> selectOneEmp(String empId);
-
 	
-	//동적쿼리 set, where, trim테스트
-	List<String> selectEmpIdList();
+	int updateEmp(Map<String, Object> params);
 
-	List<String> selectSalLevelList();
+	List<Map<String, Object>> search1Paging(Map<String, Object> params, int offset, int limit);
 
-	List<String> selectJobCodeList();
-
-	List<String> selectDeptCodeList();
-
-	int updateEmp(Map<String, Object> param);
+	int search1TotalContents(Map<String, Object> params);
 
 }

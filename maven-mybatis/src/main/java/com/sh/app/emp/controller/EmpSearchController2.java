@@ -13,11 +13,11 @@ import com.sh.app.common.AbstractController;
 import com.sh.app.emp.service.EmpService;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
 
 
 @RequiredArgsConstructor
-@Log4j
+@Log4j2
 public class EmpSearchController2 extends AbstractController {
 
 	private final EmpService empService;
@@ -25,8 +25,6 @@ public class EmpSearchController2 extends AbstractController {
 	@Override
 	public String doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// 1. 사용자 입력값처리
-		String searchType = request.getParameter("searchType"); // "email" "" null
-		String searchKeyword = request.getParameter("searchKeyword"); // "abc" "" null
 		String gender = request.getParameter("gender"); // "남" null
 		int salary = 0;
 		try {
@@ -35,20 +33,17 @@ public class EmpSearchController2 extends AbstractController {
 		
 		String salaryCompare = request.getParameter("salaryCompare"); // "ge" "le" null
 		
-		Map<String, Object> param = new HashMap<>();
-		param.put("searchType", searchType);
-		param.put("searchKeyword", searchKeyword);
-		param.put("gender", gender);
-		param.put("salary", salary);
-		param.put("salaryCompare", salaryCompare);
+		Map<String, Object> params = new HashMap<>();
+		params.put("gender", gender);
+		params.put("salary", salary);
+		params.put("salaryCompare", salaryCompare);
 		
-		log.debug("param = " + param);
+		log.debug("params = {}", params);
 		
 		// 2. 검색
-		List<Map<String, Object>> list = empService.search2(param);
-		log.debug("list = " + list);
+		List<Map<String, Object>> list = empService.search2(params);
+		log.debug("list = {}", list);
 		request.setAttribute("list", list);
-		
 		return "emp/search2";
 	}
 }

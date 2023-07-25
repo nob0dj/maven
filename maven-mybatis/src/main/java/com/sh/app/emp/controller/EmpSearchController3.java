@@ -25,23 +25,23 @@ public class EmpSearchController3 extends AbstractController {
 	@Override
 	public String doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// 1.사용자입력값 처리
-		String[] jobCodes = request.getParameterValues("jobCode");
+		String[] jobCodes = request.getParameterValues("jobCode"); // String[]로 처리
 		String[] deptCodes = request.getParameterValues("deptCode");
-		List<String> deptList = deptCodes != null ? Arrays.asList(deptCodes) : null;
+		List<String> deptList = deptCodes != null ? Arrays.asList(deptCodes) : null; // List<T>로 처리
 
-		Map<String, Object> param = new HashMap<>();
-		param.put("jobCodes", jobCodes);
-		param.put("deptList", deptList);
+		Map<String, Object> params = new HashMap<>();
+		params.put("jobCodes", jobCodes);
+		params.put("deptList", deptList);
 
 		// 2. 업무로직
-		List<Map<String, Object>> list = empService.search3(param);
-		log.debug("list = " + list);
+		List<Map<String, Object>> list = empService.search3(params);
+		log.debug("list = ", list);
 
 		// 폼에 나열할 직급목록 조회
 		List<Map<String, Object>> jobCodeList = empService.selectJobList();
-		log.debug("jobList = " + jobCodeList);
 		List<Map<String, Object>> deptCodeList = empService.selectDeptList();
-		log.debug("deptCodeList = " + deptCodeList);
+		log.debug("jobList = ", jobCodeList);
+		log.debug("deptCodeList = ", deptCodeList);
 
 		request.setAttribute("jobCodeList", jobCodeList);
 		request.setAttribute("deptCodeList", deptCodeList);

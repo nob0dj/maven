@@ -26,20 +26,18 @@ public class EmpSearchController1 extends AbstractController {
 		// 1. 사용자 입력값 처리
 		String searchType = request.getParameter("searchType");
 		String searchKeyword = request.getParameter("searchKeyword");
-		Map<String, Object> param = new HashMap<>();
-		param.put("searchType", searchType);
-		param.put("searchKeyword", searchKeyword);
-		log.debug("param = " + param);
+		Map<String, Object> params = new HashMap<>();
+		params.put("searchType", searchType);
+		params.put("searchKeyword", searchKeyword);
+		log.debug("param = {}", params);
 		
 		// 2. 업무로직
 		List<Map<String, Object>> list = null;
-		if(searchType != null && searchKeyword != null) {
-			list = empService.search1(param);
-		}
-		else {
+		if(searchType != null && searchKeyword != null)
+			list = empService.search1(params);
+		else 
 			list = empService.selectEmpList();
-		}
-		log.debug("list = " + list);
+		log.debug("list = {}", list);
 		request.setAttribute("list", list);
 		
 		return "emp/search1";

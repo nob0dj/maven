@@ -9,10 +9,12 @@ import org.apache.ibatis.session.SqlSession;
 
 import com.sh.app.common.SqlSessionTemplate;
 import com.sh.app.emp.repository.EmpRepository;
-import com.sh.app.emp.repository.EmpRepositoryImpl;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 public class EmpServiceImpl implements EmpService {
-	private EmpRepository empRepository = new EmpRepositoryImpl();
+	private final EmpRepository empRepository;
 
 	@Override
 	public List<Map<String, Object>> selectEmpList() {
@@ -23,33 +25,33 @@ public class EmpServiceImpl implements EmpService {
 	}
 
 	@Override
-	public List<Map<String, Object>> search1(Map<String, Object> map) {
+	public List<Map<String, Object>> search1(Map<String, Object> paramss) {
 		SqlSession session = getSqlSession();
-		List<Map<String, Object>> list = empRepository.search1(session, map);
+		List<Map<String, Object>> list = empRepository.search1(session, paramss);
 		session.close();
 		return list;
 	}
 
 	@Override
-	public List<Map<String, Object>> search2(Map<String, Object> map) {
+	public List<Map<String, Object>> search2(Map<String, Object> paramss) {
 		SqlSession session = getSqlSession();
-		List<Map<String, Object>> list = empRepository.search2(session, map);
+		List<Map<String, Object>> list = empRepository.search2(session, paramss);
 		session.close();
 		return list;
 	}
 
 	@Override
-	public List<Map<String, Object>> search3(Map<String, Object> map) {
+	public List<Map<String, Object>> search3(Map<String, Object> paramss) {
 		SqlSession session = getSqlSession();
-		List<Map<String, Object>> list = empRepository.search3(session, map);
+		List<Map<String, Object>> list = empRepository.search3(session, paramss);
 		session.close();
 		return list;
 	}
 
 	@Override
-	public int search3Count(Map<String, Object> map) {
+	public int search3Count(Map<String, Object> paramss) {
 		SqlSession session = SqlSessionTemplate.getSqlSession();
-		int result = empRepository.search3Count(session, map);
+		int result = empRepository.search3Count(session, paramss);
 		session.close();
 		return result;
 	}
@@ -63,25 +65,25 @@ public class EmpServiceImpl implements EmpService {
 	}
 
 	@Override
-	public int selectTotalContents() {
+	public int selectTotalCount() {
 		SqlSession session = getSqlSession();
-		int totalContents = empRepository.selectTotalContents(session);
+		int totalContents = empRepository.selectTotalCount(session);
 		session.close();
 		return totalContents;
 	}
 
 	@Override
-	public List<Map<String, Object>> search1Paging(Map<String, Object> map, int cPage, int numPerPage) {
+	public List<Map<String, Object>> search1Paging(Map<String, Object> paramss, int cPage, int numPerPage) {
 		SqlSession session = getSqlSession();
-		List<Map<String, Object>> list = empRepository.search1Paging(session, map, cPage, numPerPage);
+		List<Map<String, Object>> list = empRepository.search1Paging(session, paramss, cPage, numPerPage);
 		session.close();
 		return list;
 	}
 
 	@Override
-	public int search1TotalContents(Map<String, Object> map) {
+	public int search1TotalContents(Map<String, Object> paramss) {
 		SqlSession session = getSqlSession();
-		int totalContents = empRepository.search1TotalContents(session, map);
+		int totalContents = empRepository.search1TotalContents(session, paramss);
 		session.close();
 		return totalContents;
 	}
@@ -94,47 +96,36 @@ public class EmpServiceImpl implements EmpService {
 		return emp;
 	}
 
-	@Override
-	public List<String> selectEmpIdList() {
-		SqlSession session = getSqlSession();
-		List<String> list = empRepository.selectEmpIdList(session);
-		session.close();
-		return list;
-	}
 
 	@Override
-	public List<String> selectSalLevelList() {
+	public int updateEmp(Map<String, Object> params) {
 		SqlSession session = getSqlSession();
-		List<String> list = empRepository.selectSalLevelList(session);
-		session.close();
-		return list;
-	}
-
-	@Override
-	public List<String> selectJobCodeList() {
-		SqlSession session = getSqlSession();
-		List<String> list = empRepository.selectJobCodeList(session);
-		session.close();
-		return list;
-	}
-
-	@Override
-	public List<String> selectDeptCodeList() {
-		SqlSession session = getSqlSession();
-		List<String> list = empRepository.selectDeptCodeList(session);
-		session.close();
-		return list;
-	}
-
-	@Override
-	public int updateEmp(Map<String, Object> param) {
-		SqlSession session = getSqlSession();
-		int result = empRepository.updateEmp(session, param);
-		if (result > 0)
+		int result = 0;
+		try {
+			result = empRepository.updateEmp(session, params);
 			session.commit();
-		else
+		} catch(Exception e) {
 			session.rollback();
-		session.close();
+			throw e;
+		} finally {			
+			session.close();
+		}
 		return result;
+	}
+
+	@Override
+	public List<Map<String, Object>> selectJobList() {
+		SqlSession session = getSqlSession();
+		List<Map<String, Object>> jobList = empRepository.selectJobList(session);
+		session.close();
+		return jobList;
+	}
+
+	@Override
+	public List<Map<String, Object>> selectDeptList() {
+		SqlSession session = getSqlSession();
+		List<Map<String, Object>> deptList = empRepository.selectDeptList(session);
+		session.close();
+		return deptList;
 	}
 }

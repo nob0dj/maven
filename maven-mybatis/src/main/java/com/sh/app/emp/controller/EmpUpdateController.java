@@ -1,47 +1,64 @@
-package com.kh.emp.controller;
+package com.sh.app.emp.controller;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.kh.common.AbstractController;
-import com.kh.emp.model.service.EmpService;
-import com.kh.emp.model.service.EmpServiceImpl;
+import com.sh.app.common.AbstractController;
+import com.sh.app.emp.service.EmpService;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+
+@RequiredArgsConstructor
+@Log4j2
 public class EmpUpdateController extends AbstractController {
-	
-	private EmpService empService = new EmpServiceImpl();
+
+	private final EmpService empService;
 	
 	@Override
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		//파라미터값 가져오기
+	public String doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		// 1. 사용자입력값처리
 		String empId = request.getParameter("empId");
-		Map<String, String> emp = null;
+		String jobCode = request.getParameter("jobCode");
+		String deptCode = request.getParameter("deptCode");
 		
-		//EMP_ID 목록 가져오기
-		List<String> empIdList = empService.selectEmpIdList();
-		request.setAttribute("empIdList", empIdList);
-
-		//조회한 empId가 있는 경우, 수정폼을 위한 목록준비
-		if(empId!=null){
-			emp = empService.selectOneEmp(empId);
-			
-			//KH.EMPLOYEE.SAL_LEVEL 목록 가져오기
-			List<String> salLevelList = empService.selectSalLevelList();
-			//KH.JOB.JOB_CODE 목록 가져오기
-			List<String> jobCodeList = empService.selectJobCodeList();
-			//KH.DEPARTMENT.DEPT_ID 목록 가져오기
-			List<String> deptCodeList = empService.selectDeptCodeList();
-			
-			request.setAttribute("emp", emp);
-			request.setAttribute("salLevelList", salLevelList);
-			request.setAttribute("jobCodeList", jobCodeList);
-			request.setAttribute("deptCodeList", deptCodeList);
-		}
-			
-		setView("/WEB-INF/views/emp/empUpdate.jsp");
+		Map<String, Object> param = new HashMap<>();
+		param.put("empId", empId);
+		param.put("jobCode", jobCode);
+		param.put("deptCode", deptCode);
+		log.debug("param = {}", param);
+		
+		// 2. 업무로직
+		int result = empService.updateEmp(param);
+		
+		return "redirect:/emp/updateEmp.do?empId=" + empId;
 	}
-
+	
+	@Override
+	public String doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// 1. 사용자 입력값 처리
+		String empId = request.getParameter("empId");
+		log.debug("empId = {}", empId);
+		
+		// 2. 업무로직
+		Map<String, Object> emp = empService.selectOneEmp(empId);
+		log.debug("emp = {}", emp);
+		
+		List<Map<String, Object>> jobList = empService.selectJobList();
+		List<Map<String, Object>> deptList = empService.selectDeptList();
+		
+		// 3. jsp데이터 전달
+		request.setAttribute("emp", emp);
+		request.setAttribute("jobList", jobList);
+		request.setAttribute("deptList", deptList);
+		
+		return "emp/updateEmp";
+	}
 }
