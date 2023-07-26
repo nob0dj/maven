@@ -63,10 +63,9 @@ class EmpServiceTest {
 		});
 	}
 	
-	@DisplayName("emp 검색1 - 사번 | 사원명 | 이메일 | 전화번호 (like연산)")
+	@DisplayName("emp 검색1 - 사원명 | 이메일 | 전화번호 (like연산)")
 	@ParameterizedTest
 	@CsvSource(value = {
-		"emp_id, 202",
 		"emp_name, 동",
 		"email,a",
 		"phone,010"
