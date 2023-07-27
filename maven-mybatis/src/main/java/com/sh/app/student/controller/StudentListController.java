@@ -43,7 +43,12 @@ public class StudentListController extends AbstractController {
 		log.debug("studentMaps = {}", studentMaps);
 		log.debug("studentKeyMap = {}", students);
 		
-		// 2.jsp위임
+		// 페이징처리
+		int totalCount = studentService.getTotalCount();
+		int lastPage = (int) Math.ceil((double) totalCount / limit);
+		request.setAttribute("lastPage", lastPage);
+		request.setAttribute("page", page);
+		
 		request.setAttribute("students", students);
 		request.setAttribute("studentMaps", studentMaps);
 		request.setAttribute("studentKeyMap", studentKeyMap);
